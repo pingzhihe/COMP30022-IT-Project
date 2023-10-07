@@ -1,4 +1,4 @@
-name: SSH to Server and Execute Scripts
+name: CD Workflow
 
 on:
   push:
@@ -8,21 +8,24 @@ on:
 jobs:
   deploy:
     runs-on: ubuntu-latest
+    
     steps:
-    - name: Checkout repository
+    - name: Checkout code
       uses: actions/checkout@v2
 
-    - name: Set up SSH key
+    - name: Setup SSH
       run: |
-        echo "${{ secrets.YOUR_SECRET_KEY }}" > githubAction.pem
-        chmod 600 githubAction.pem
+        mkdir -p ~/.ssh
+        echo "${{ secrets.SSH_PRIVATE_KEY }}" > ~/.ssh/id_rsa
+        chmod 600 ~/.ssh/id_rsa
+        ssh-keyscan -H ${{ secrets.EC2_SSH_ADDRESS }} >> ~/.ssh/known_hosts
 
-    - name: SSH into server and execute scripts
+    - name: Deploy to EC2
       run: |
-        ssh -i githubAction.pem ubuntu@ec2-54-252-24-102.ap-southeast-2.compute.amazonaws.com 'bash -s' << 'ENDSSH'
-        # Commands to run on the remote server
-        cd COMP30022-IT-Project
-        git pull
-        sudo systemctl restart myflaskapp
-        # Add more commands here if needed
+        ssh -i ~/.ssh/id_rsa ubuntu@${{ secrets.EC2_SSH_ADDRESS }} 'bash -s' << 'ENDSSH'
+          # Commands to run on the remote server
+          cd COMP30022-IT-Project
+          git pull
+          sudo systemctl restart myflaskapp
+          # Add more commands here if needed
         ENDSSH
