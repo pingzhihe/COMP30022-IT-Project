@@ -22,7 +22,7 @@ jobs:
       run: |
         ssh -i githubAction.pem ubuntu@ec2-54-252-24-102.ap-southeast-2.compute.amazonaws.com 'bash -s' << 'ENDSSH'
         # Commands to run on the remote server
-        cd /path/to/your/app
+        cd COMP30022-IT-Project
         git pull
         sudo systemctl restart myflaskapp
         # Add more commands here if needed
