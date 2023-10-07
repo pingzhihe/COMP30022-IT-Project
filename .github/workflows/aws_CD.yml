@@ -1,4 +1,4 @@
-name: CD Workflow
+name: SSH to Server and Execute Scripts
 
 on:
   push:
@@ -10,13 +10,20 @@ jobs:
     runs-on: ubuntu-latest
     
     steps:
-    - name: Execute SSH command
-      uses: appleboy/ssh-action@v0.1.3
-      with:
-        host: ${{ secrets.EC2_SSH_ADDRESS }}
-        username: ubuntu
-        key: ${{ secrets.SSH_PRIVATE_KEY }}
-        script: |
-          cd COMP30022-IT-Project
-          git pull
-          sudo systemctl restart myflaskapp
+    - name: Checkout repository
+      uses: actions/checkout@v2
+
+    - name: Set up SSH key
+      run: |
+        echo "${{ secrets.YOUR_SECRET_KEY }}" > githubAction.pem
+        chmod 600 githubAction.pem
+
+    - name: SSH into server and execute scripts
+      run: |
+        ssh -i githubAction.pem ubuntu@ec2-54-252-24-102.ap-southeast-2.compute.amazonaws.com 'bash -s' << 'ENDSSH'
+        # Commands to run on the remote server
+        cd /path/to/your/app
+        git pull
+        sudo systemctl restart myflaskapp
+        # Add more commands here if needed
+        ENDSSH
