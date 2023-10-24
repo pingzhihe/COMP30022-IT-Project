@@ -25,7 +25,7 @@
               <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
             </div>
             <div class="modal-body" id="model-intro">
-              nativejs
+                Speech recognition involves receiving speech through a device's microphone, which is then checked by a speech recognition service against a list of grammar (basically, the vocabulary you want to have recognized in a particular app.) When a word or phrase is successfully recognized, it is returned as a result (or list of results) as a text string, and further actions can be initiated as a result. The Web Speech API has a main controller interface for this — SpeechRecognition — plus a number of closely-related interfaces for representing grammar, results, etc.
             </div>
           </div>
         </div>
@@ -36,7 +36,7 @@
         <h6>  Choose the STT model</h6>
         <div>
             <select class="form-select" id="modelSelect">
-                <option value="nativejs"> Native JS </option>
+                <option value="Mozilla"> Mozilla </option>
                 <option value="whisper"> Whisper </option>
                 <option value="google-cloud"> Google Cloud </option>
             </select>
@@ -74,7 +74,7 @@
         <div id="output-block" style="display:none;">
             <h6> You might want to make the robot </h6>
             <h5 id="output-command"> </h5>
-            <button class="retryBtn">
+            <button id="retryBtn">
                     <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-arrow-clockwise" viewBox="0 0 16 16">
                     <path fill-rule="evenodd" d="M8 3a5 5 0 1 0 4.546 2.914.5.5 0 0 1 .908-.417A6 6 0 1 1 8 2v1z"/>
                     <path d="M8 4.466V.534a.25.25 0 0 1 .41-.192l2.36 1.966c.12.1.12.284 0 .384L8.41 4.658A.25.25 0 0 1 8 4.466z"/>

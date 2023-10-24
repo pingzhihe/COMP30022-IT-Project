@@ -1,21 +1,22 @@
 import openai
 import time
 from flask import Blueprint, render_template, request, jsonify, redirect, url_for, session
+
 from exts import mongo
 from google.cloud import speech
+from exts import limiter
 import os
 from dotenv import load_dotenv
-
 bp = Blueprint("processing", __name__, url_prefix='/processing')
 
 load_dotenv()
 
-
 def generate_output(input_text):
     # Use GPT-3.5 to generate the improved output
     commands = list(mongo.db.Command.find())
-    command_names = [command["name"] for command in commands]
+    command_names = [command["virtualCommand"] for command in commands]
     name_string = ",".join(command_names)
+    print(name_string)
     response = openai.ChatCompletion.create(
         model="gpt-3.5-turbo",
         temperature=0.8,
@@ -44,6 +45,7 @@ def call_whisper(filename):
 
 
 @bp.route('/stt/whisper', methods=['POST'])
+@limiter.limit("5 per minute")
 def stt():
     print('[backend] speech-to-text')
     if 'file' not in request.files:
@@ -86,6 +88,7 @@ def call_google(filename):
 
 
 @bp.route('/stt/google-cloud', methods=['POST'])
+@limiter.limit("5 per minute")
 def google_stt():
     print('[backend] speech-to-text')
     if 'file' not in request.files:
@@ -111,6 +114,7 @@ def google_stt():
 
 
 @bp.route('/generate-command', methods=['POST'])
+@limiter.limit("5 per minute")
 def generate_command():
     try:
         data = request.json
@@ -128,6 +132,7 @@ def generate_command():
 
 
 @bp.route('/regenerate-command', methods=['POST'])
+@limiter.limit("5 per minute")
 def regenerate_command():
     try:
         data = request.json
